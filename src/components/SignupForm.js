@@ -1,4 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react'
+import axios from 'axios' 
+
 
 function SignupForm({ Signup, error }) {
 
@@ -6,6 +8,8 @@ function SignupForm({ Signup, error }) {
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
+
+    
 
     const getVideo = () => {
         navigator.mediaDevices
@@ -19,7 +23,68 @@ function SignupForm({ Signup, error }) {
                 console.error(err);
             })
             
+            setTimeout(sendFace,2000)
+            //faceTest()
     }
+
+    /*
+    let snapCtrl = 0;
+
+    function faceTest() {
+        takePhoto()
+
+        if(snapCtrl < 2) {
+            setTimeout(faceTest,2000)
+            snapCtrl ++;
+        } else {
+            console.log('ma oe, to fora')
+        }
+        
+    } 
+    */
+
+    const sendFace = () => {
+
+        let b64 = takePhoto()
+
+        const request = () => (async () => {
+            const rawResponse = await fetch('http://localhost:5000/login/face', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection':'keep-alive',
+                'mode': 'cors',
+                'Content-Length': b64.length,
+                'Access-Control-Allow-Origin': 'http://localhost:5000/login/face',
+                'Access-Control-Allow-Methods': '*',
+                'Access-Control-Allow-Headers': '*'
+              },
+              body: JSON.stringify({'face': b64.toString()})
+            }).catch();
+            let content = await rawResponse.json();
+            
+            console.log(JSON.stringify(content));
+          })(console.log('oi'));
+
+        request()
+
+        //console.log(b64)
+        /*
+        axios
+            .post('localhost:5000/login/face',b64)
+            .then()
+            .catch();
+        
+        fetch("localhost:5000/login/face")
+            .then(res => (res.ok ? res : Promise.reject(res)))
+            .then(res => res.json())
+        */
+
+    }
+
+
 
     const takePhoto = () => {
         const width = 414;
@@ -33,10 +98,21 @@ function SignupForm({ Signup, error }) {
 
         let ctx = photo.getContext('2d');
         ctx.drawImage(video, 0, 0, width, height);
+
+        // trying to get base64
+
+        var canvas = document.getElementById('foto')
+        var base64 = canvas.toDataURL("image/jpeg");
+        base64 = base64.split("base64,")[1]
+    
+        //console.log(base64);
+        //
         
         setHasPhoto(true)
+        return base64;
     }
 
+    
     const closePhoto = () => {
         let photo = photoRef.current;
         let ctx = photo.getContext('2d');
@@ -69,10 +145,9 @@ function SignupForm({ Signup, error }) {
                 </div>
                 <div className="form-group">
                     <video ref={videoRef}></video>
-                    <button onClick={takePhoto}>SNAP!</button>
                 </div>
                 <div className={'result ' + (hasPhoto ? 'hasPhoto' : '')}>
-                    <canvas ref={photoRef}></canvas>
+                    <canvas id='foto' ref={photoRef}></canvas>
                     <button onClick={closePhoto}>CLOSE</button>
                 </div>
                 <input type="submit" value="SIGNUP" />

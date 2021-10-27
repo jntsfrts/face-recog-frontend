@@ -20,12 +20,15 @@ function App() {
 
     console.log(details)
 
+
+
     if(details.name !== "") {
       setUser({name: details.name})
     } else {
-      setError("Details do not match.")
+      setError("O campo 'nome' não pode ser nulo.")
     }
-    /* 
+    
+    /*
     if(details.email == adminUser.email && details.password == adminUser.password) {
       console.log("Logged in");
       setUser({
@@ -54,12 +57,13 @@ function App() {
     <div className="App">
       {(user.name != "") ? (
         <div className="welcome">
-          <h2>Welcome, <span>{user.name}</span></h2>
+          <h2>Cadastro efetuado com sucesso, <span>{user.name}.</span></h2>
+          <h3>Teste</h3>
           <button onClick={Logout}>Logout</button>
         </div>
       ) : (
         //<LoginForm Login={Login} error={error}/>
-        <SignupForm Signup={Signup} error={error}/>
+        <SignupForm Signup={Signup}/>
       )}
     </div>
   );

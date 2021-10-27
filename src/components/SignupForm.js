@@ -1,8 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react'
-import axios from 'axios' 
 
 
-function SignupForm({ Signup, error }) {
+
+function SignupForm({ Signup }) {
 
     const [details, setDetails] = useState({name:""});
     const videoRef = useRef(null);
@@ -22,26 +22,9 @@ function SignupForm({ Signup, error }) {
             .catch(err => {
                 console.error(err);
             })
-            
             setTimeout(sendFace,2000)
-            //faceTest()
     }
 
-    /*
-    let snapCtrl = 0;
-
-    function faceTest() {
-        takePhoto()
-
-        if(snapCtrl < 2) {
-            setTimeout(faceTest,2000)
-            snapCtrl ++;
-        } else {
-            console.log('ma oe, to fora')
-        }
-        
-    } 
-    */
 
     const sendFace = () => {
 
@@ -52,36 +35,24 @@ function SignupForm({ Signup, error }) {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Connection':'keep-alive',
-                'mode': 'cors',
-                'Content-Length': b64.length,
-                'Access-Control-Allow-Origin': 'http://localhost:5000/login/face',
-                'Access-Control-Allow-Methods': '*',
-                'Access-Control-Allow-Headers': '*'
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({'face': b64.toString()})
             }).catch();
+            
             let content = await rawResponse.json();
             
             console.log(JSON.stringify(content));
-          })(console.log('oi'));
+            
+            let hasFace = content['hasFace']
+
+            if(hasFace == false) {
+                sendFace()
+            }
+
+          })();
 
         request()
-
-        //console.log(b64)
-        /*
-        axios
-            .post('localhost:5000/login/face',b64)
-            .then()
-            .catch();
-        
-        fetch("localhost:5000/login/face")
-            .then(res => (res.ok ? res : Promise.reject(res)))
-            .then(res => res.json())
-        */
-
     }
 
 
@@ -105,10 +76,10 @@ function SignupForm({ Signup, error }) {
         var base64 = canvas.toDataURL("image/jpeg");
         base64 = base64.split("base64,")[1]
     
-        //console.log(base64);
+        console.log(base64);
         //
         
-        setHasPhoto(true)
+        //setHasPhoto(true)
         return base64;
     }
 
@@ -137,10 +108,10 @@ function SignupForm({ Signup, error }) {
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h2>Signup</h2>
-                {(error !== "") ? (<div className="error">{error}</div>) : ""}
+                <h2>Cadastro</h2>
+               
                 <div className="form-group">
-                    <label htmlFor="name">Name:</label>
+                    <label htmlFor="name">Nome:</label>
                     <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
                 </div>
                 <div className="form-group">

@@ -75,9 +75,6 @@ function SignupForm({ Signup }) {
         var canvas = document.getElementById('foto')
         var base64 = canvas.toDataURL("image/jpeg");
         base64 = base64.split("base64,")[1]
-    
-        console.log(base64);
-        //
         
         //setHasPhoto(true)
         return base64;

@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import LoginForm from "./components/LoginForm";
 import SignupForm from "./components/SignupForm";
+import { Link, Route, Switch, BrowserRouter } from "react-router-dom";
 
 
 // Signup form (name and photo)=> Signup button and confirmation message
@@ -55,16 +56,24 @@ function App() {
 
   return (
     <div className="App">
-      {(user.name != "") ? (
-        <div className="welcome">
-          <h2>Cadastro efetuado com sucesso, <span>{user.name}.</span></h2>
-          <h3>Teste</h3>
-          <button onClick={Logout}>Logout</button>
-        </div>
-      ) : (
-        //<LoginForm Login={Login} error={error}/>
-        <SignupForm Signup={Signup}/>
-      )}
+      <BrowserRouter>
+        <Route path="/" component={App}>
+          
+          <Route path="/signup" component={SignupForm}>
+            {(user.name != "") ? (
+              <div className="welcome">
+                <h2>Cadastro efetuado com sucesso, <span>{user.name}.</span></h2>
+                <h3>Teste</h3>
+                <button onClick={Logout}>Logout</button>
+              </div>
+            ) : (
+              //<LoginForm Login={Login} error={error}/>
+              <SignupForm Signup={Signup}/>
+              )}
+          </Route>
+          <Route path="/login" component={LoginForm} />
+        </Route>
+      </BrowserRouter>
     </div>
   );
 }

@@ -21,8 +21,6 @@ function App() {
 
     console.log(details)
 
-
-
     if(details.name !== "") {
       setUser({name: details.name})
     } else {
@@ -38,6 +36,34 @@ function App() {
       })
 
 
+    } else {
+      console.log("Details do not match");
+      setError("Details do not match.")
+    }
+    */
+  }
+
+  const Login = details => {
+
+    console.log(details)
+
+    if(details.user != "" && details.email != "" && details.password != "") {
+      setUser({
+        name: details.name,
+        email: details.email
+      })
+    }
+
+    /*
+
+    if(details.email == adminUser.email && details.password == adminUser.password) {
+      console.log("Logged in");
+      setUser({
+        name: details.name,
+        email: details.email
+      })
+      
+      
     } else {
       console.log("Details do not match");
       setError("Details do not match.")
@@ -71,7 +97,18 @@ function App() {
               <SignupForm Signup={Signup}/>
               )}
           </Route>
-          <Route path="/login" component={LoginForm} />
+          <Route path="/login" component={LoginForm}>
+          {(user.name != "") ? (
+              <div className="welcome">
+                <h2>Login efetuado com sucesso, <span>{user.name}.</span></h2>
+                <h3>Teste</h3>
+                <button onClick={Logout}>Logout</button>
+              </div>
+            ) : (
+              <LoginForm Login={Login} error={error}/>
+              ///<SignupForm Signup={Signup}/>
+              )}
+          </Route>
         </Route>
       </BrowserRouter>
     </div>

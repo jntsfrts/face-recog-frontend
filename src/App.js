@@ -47,10 +47,9 @@ function App() {
 
     console.log(details)
 
-    if(details.user != "" && details.email != "" && details.password != "") {
+    if(details.user != "") {
       setUser({
-        name: details.name,
-        email: details.email
+        name: details.name
       })
     }
 

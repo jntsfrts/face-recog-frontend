@@ -6,6 +6,7 @@ function LoginForm({ Login, error }) {
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
+    let hasFace = false;
 
 
     const submitHandler = e => {
@@ -25,7 +26,7 @@ function LoginForm({ Login, error }) {
             .catch(err => {
                 console.error(err);
             })
-            //setTimeout(sendFace,2000)
+            setTimeout(sendFace,2000)
     }
 
 
@@ -35,28 +36,36 @@ function LoginForm({ Login, error }) {
         let b64 = takePhoto()
 
         const request = () => (async () => {
-            const rawResponse = await fetch('http://localhost:5000/login/face', {
+            const rawResponse = await fetch('http://localhost:5000/login', {
               method: 'POST',
               headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({'face': b64.toString()})
+              body: JSON.stringify({'photo': b64.toString()})
             }).catch();
             
             let content = await rawResponse.json();
             
-            console.log(JSON.stringify(content));
+            console.log(`CONTENT TEST ${JSON.stringify(content.name)}`);
             
-            let hasFace = content['hasFace']
+            
 
-            if(hasFace == false) {
-                sendFace()
+            if(content.name != "" || content.name != "Undefined") {
+                details.name = content.name;
+                console.log('Logado', content.name);
+                hasFace = true;
             }
+            
 
-          })();
-
+            
+        })();
+        
         request()
+
+        if(hasFace == false) {
+            setTimeout(sendFace,5000);
+        }
     }
 
 
@@ -108,10 +117,6 @@ function LoginForm({ Login, error }) {
             <div className="form-inner">
                 <h2>Login</h2>
                 {(error !== "") ? (<div className="error">{error}</div>) : ""}
-                <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
-                </div>
                 <div className="form-group">
                     <video ref={videoRef}></video>
                 </div>

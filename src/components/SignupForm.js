@@ -4,10 +4,12 @@ import React, {useState, useRef, useEffect} from 'react'
 
 function SignupForm({ Signup }) {
 
-    const [details, setDetails] = useState({name:""});
+    const [details, setDetails] = useState({name:"", face:""});
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
+
+    let hasFace = false;
 
     
 
@@ -27,8 +29,10 @@ function SignupForm({ Signup }) {
 
 
     const sendFace = () => {
-
+        console.log('ON SEND FACE')
         let b64 = takePhoto()
+
+        
 
         const request = () => (async () => {
             const rawResponse = await fetch('http://localhost:5000/login/face', {
@@ -44,16 +48,18 @@ function SignupForm({ Signup }) {
             
             console.log(JSON.stringify(content));
             
-            let hasFace = content['hasFace']
-
-            if(hasFace == false) {
-                sendFace()
-            }
-
+            hasFace = content['hasFace']
+            
           })();
 
-        request()
-    }
+
+          request()
+
+          if(hasFace == false) {
+            console.log('TRYING TO SEND FACE AGAIN')
+            setTimeout(sendFace,5000)
+            }
+        }
 
 
 
@@ -75,7 +81,7 @@ function SignupForm({ Signup }) {
         var canvas = document.getElementById('foto')
         var base64 = canvas.toDataURL("image/jpeg");
         base64 = base64.split("base64,")[1]
-        
+        details.face = base64
         //setHasPhoto(true)
         return base64;
     }
@@ -97,8 +103,36 @@ function SignupForm({ Signup }) {
 
     const submitHandler = e => {
         e.preventDefault();
+        console.log(`DETAILS ON EVENT ==>${details.name}<==`)
 
-        Signup(details)
+        if(details.name != "") {
+            Signup(details)
+
+            const request = () => (async () => {
+                const rawResponse = await fetch('http://localhost:5000/signup', {
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                                            'name':details.name,
+                                            'face': details.face.toString()
+                                        })
+                }).catch();
+                
+                let content = await rawResponse.json();
+                
+                console.log(`RESPONSE ==> ${JSON.stringify(content)}`);
+                
+                //hasFace = content['hasFace']
+                
+              })();
+    
+    
+              request()
+        }
+
     } 
 
 
@@ -118,7 +152,7 @@ function SignupForm({ Signup }) {
                     <canvas id='foto' ref={photoRef}></canvas>
                     <button onClick={closePhoto}>CLOSE</button>
                 </div>
-                <input type="submit" value="SIGNUP" />
+                <input type="submit" value="SIGNUP" disabled={hasPhoto}/>
             </div>
         </form>
     )

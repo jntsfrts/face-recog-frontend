@@ -100,12 +100,10 @@ function App() {
           {(user.name != "") ? (
               <div className="welcome">
                 <h2>Login efetuado com sucesso, <span>{user.name}.</span></h2>
-                <h3>Teste</h3>
                 <button onClick={Logout}>Logout</button>
               </div>
             ) : (
               <LoginForm Login={Login} error={error}/>
-              ///<SignupForm Signup={Signup}/>
               )}
           </Route>
         </Route>

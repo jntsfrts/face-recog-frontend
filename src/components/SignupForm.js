@@ -37,7 +37,11 @@ function SignupForm({ Signup }) {
             method: 'POST',
             headers: { 
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Access-Control-Allow-Headers': '*'
+                
             },
             body: JSON.stringify({'face': b64.toString()})
         };
@@ -53,7 +57,8 @@ function SignupForm({ Signup }) {
                     setTimeout(sendFace,5000)
                     console.log(`[FACE NOT FOUND]`)
                 }
-            }).then(
+            })
+            .then(
 
                 fetch('http://localhost:5000/login', requestOptions)
                     .then(response => response.json())

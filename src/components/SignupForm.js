@@ -4,13 +4,14 @@ import React, {useState, useRef, useEffect} from 'react'
 
 function SignupForm({ Signup }) {
 
-    const [details, setDetails] = useState({name:"", face:""});
+    const [details, setDetails] = useState({name:"", email:"", face:""});
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
+    const [hasFace, setHasFace] = useState(false)
 
-    let hasFace = false;
-
+    let testeFace = false;
+    let hasFace2 = false;
     
 
     const getVideo = () => {
@@ -32,33 +33,42 @@ function SignupForm({ Signup }) {
         console.log('ON SEND FACE')
         let b64 = takePhoto()
 
-        
-
-        const request = () => (async () => {
-            const rawResponse = await fetch('http://localhost:5000/login/face', {
-              method: 'POST',
-              headers: {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({'face': b64.toString()})
-            }).catch();
-            
-            let content = await rawResponse.json();
-            
-            console.log(JSON.stringify(content));
-            
-            hasFace = content['hasFace']
-            
-          })();
+            },
+            body: JSON.stringify({'face': b64.toString()})
+        };
 
 
-          request()
+        fetch('http://localhost:5000/login/face', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                if(data.hasFace == "true") {
+                    console.log(`[FACE FOUND] ${data.hasFace}`)
+                    setHasFace(data.hasFace)
+                } else {
+                    setTimeout(sendFace,5000)
+                    console.log(`[FACE NOT FOUND]`)
+                }
+            }).then(
 
-          if(hasFace == false) {
-            console.log('TRYING TO SEND FACE AGAIN')
-            setTimeout(sendFace,5000)
-            }
+                fetch('http://localhost:5000/login', requestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status == "succesful" && data.name !== "None") {
+                            console.log(`[USER ALREADY EXISTS]`)
+                            //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
+                            if (window.confirm(`OOPS! ${data.name} já possui cadastro. 😞 \nClique em OK para fazer login.`)) 
+                            {
+                            window.location.href='http://localhost:3000/login';
+                            };
+                        }
+                    })
+
+            );
         }
 
 
@@ -103,37 +113,46 @@ function SignupForm({ Signup }) {
 
     const submitHandler = e => {
         e.preventDefault();
-        console.log(`DETAILS ON EVENT ==>${details.name}<==`)
+        
+        console.log("[ON SUBMIT HANDLER] - hasFace: "+  hasFace + " name:" + (details.name != ""))
 
-        if(details.name != "") {
-            Signup(details)
+        if(details.name !== "" && Boolean(hasFace) === true) {
+            
+            //Signup(details) //TODO colocar signup depois, dentro do then()
+            
+            
 
-            const request = () => (async () => {
-                const rawResponse = await fetch('http://localhost:5000/signup', {
-                  method: 'POST',
-                  headers: {
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                                            'name':details.name,
-                                            'face': details.face.toString()
-                                        })
-                }).catch();
-                
-                let content = await rawResponse.json();
-                
-                console.log(`RESPONSE ==> ${JSON.stringify(content)}`);
-                
-                //hasFace = content['hasFace']
-                
-              })();
+                },
+                body: JSON.stringify({'name':details.name, 'face': details.face.toString()})
+            };
     
     
-              request()
+            fetch('http://localhost:5000/signup', requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status == "succesful" && data.name !== "None") {
+                        console.log(`[USER LOGGED IN] ${data.name}`)
+                        details.name = data.name
+                        Signup(details)
+                    } else {
+                        console.log(`[USER ALREADY EXISTS]`)
+                        //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
+                        if (window.confirm(`OOPS! ${data.name} já possui cadastro. 😞 \nClique em OK para fazer login.`)) 
+                        {
+                        window.location.href='http://localhost:3000/login';
+                        };
+                        
+                    }
+                }).then(console.log("testando ultimo then"));
         }
 
-    } 
+    }
+
 
 
     return (
@@ -146,13 +165,17 @@ function SignupForm({ Signup }) {
                     <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
                 </div>
                 <div className="form-group">
+                    <label htmlFor="name">Email:</label>
+                    <input type="email" name="email" id="email" onChange={e => setDetails({...details, email:e.target.value})} value={details.email}/>
+                </div>
+                <div className="form-group">
                     <video ref={videoRef}></video>
                 </div>
                 <div className={'result ' + (hasPhoto ? 'hasPhoto' : '')}>
                     <canvas id='foto' ref={photoRef}></canvas>
                     <button onClick={closePhoto}>CLOSE</button>
                 </div>
-                <input type="submit" value="SIGNUP" disabled={hasPhoto}/>
+                <input type="submit" value="SIGNUP" disabled={!hasFace}/>
             </div>
         </form>
     )

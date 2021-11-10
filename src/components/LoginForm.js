@@ -6,8 +6,8 @@ function LoginForm({ Login, error }) {
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
-    let hasFace = false;
-
+    //let hasFace = false;
+    const [hasFace, setHasFace] = useState(false)
 
     const submitHandler = e => {
         e.preventDefault();
@@ -34,7 +34,37 @@ function LoginForm({ Login, error }) {
     const sendFace = () => {
 
         let b64 = takePhoto()
+        
+        const requestOptions = {
+            method: 'POST',
+            headers: { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'face': b64.toString()})
+        };
 
+        fetch('http://localhost:5000/login', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                if(data.status == "succesful" && data.name !== "None") {
+                    console.log(`[USER LOGGED IN] ${data.name}`)
+                    details.name = data.name
+                    setHasFace(true)
+                    Login(details)
+                } else {
+                    console.log(`[USER NOT FOUND]`)
+                    //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
+                    if (window.confirm('OOPS! Não foi possível logar. 😞 \nClique em Cancelar para tentar novamente ou em OK para se cadastrar.')) 
+                    {
+                    window.location.href='http://localhost:3000/signup';
+                    };
+                    setTimeout(sendFace,2000)
+                }
+            });
+        
+        
+        /*
         const request = () => (async () => {
             const rawResponse = await fetch('http://localhost:5000/login', {
               method: 'POST',
@@ -66,6 +96,8 @@ function LoginForm({ Login, error }) {
         if(hasFace == false) {
             setTimeout(sendFace,5000);
         }
+
+        */
     }
 
 
@@ -77,6 +109,10 @@ function LoginForm({ Login, error }) {
 
         let video = videoRef.current;
         let photo = photoRef.current;
+
+        if(photo == null) {
+            return
+        }
 
         photo.width = width;
         photo.height = height;
@@ -124,7 +160,6 @@ function LoginForm({ Login, error }) {
                     <canvas id='foto' ref={photoRef}></canvas>
                     <button onClick={closePhoto}>CLOSE</button>
                 </div>
-                <input type="submit" value="LOGIN" />
             </div>
         </form>
     )

@@ -8,9 +8,10 @@ function SignupForm({ Signup }) {
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
+    const [hasFace, setHasFace] = useState(false)
 
-    let hasFace = false;
-
+    let testeFace = false;
+    let hasFace2 = false;
     
 
     const getVideo = () => {
@@ -32,8 +33,35 @@ function SignupForm({ Signup }) {
         console.log('ON SEND FACE')
         let b64 = takePhoto()
 
-        
+        const requestOptions = {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer my-token',
+                'My-Custom-Header': 'foobar'
+            },
+            body: JSON.stringify({'face': b64.toString()})
+        };
 
+
+        fetch('http://localhost:5000/login/face', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                if(data.hasFace == "true") {
+                    console.log(`[FACE FOUND] ${data.hasFace}`)
+                    setHasFace(data.hasFace)
+                } else {
+                    setTimeout(sendFace,5000)
+                    console.log(`[FACE NOT FOUND]`)
+                }
+            }).then(console.log("testando ultimo then"));
+            
+            //.then(data => setHasFace(data.hasFace)); OK
+            
+            //.then(data => setHasFace( data.hasFace ))
+            //.then(data => this.setState({ postId: data.id }));
+        /*
+        
         const request = () => (async () => {
             const rawResponse = await fetch('http://localhost:5000/login/face', {
               method: 'POST',
@@ -48,17 +76,26 @@ function SignupForm({ Signup }) {
             
             console.log(JSON.stringify(content));
             
-            hasFace = content['hasFace']
+            //console.log("HAS FACE BEFORE", hasFace)
+   
+            //hasFace = content['hasFace']
+            hasFace2 = content['hasFace'] == "true"
+            
+            console.log("Estado do hasFace2", hasFace2)
             
           })();
-
-
-          request()
+          */
+          //let teste = ""
+          
+          //teste = request().then()   
+          
+          /*
 
           if(hasFace == false) {
             console.log('TRYING TO SEND FACE AGAIN')
             setTimeout(sendFace,5000)
             }
+            */
         }
 
 
@@ -103,10 +140,13 @@ function SignupForm({ Signup }) {
 
     const submitHandler = e => {
         e.preventDefault();
-        console.log(`DETAILS ON EVENT ==>${details.name}<==`)
+        
+        console.log("[ON SUBMIT HANDLER] - hasFace: "+  hasFace + " name:" + (details.name != ""))
 
-        if(details.name != "") {
+        if(details.name !== "" && Boolean(hasFace) === true) {
+            console.log("pré signup")
             Signup(details)
+            console.log("pós signup")
 
             const request = () => (async () => {
                 const rawResponse = await fetch('http://localhost:5000/signup', {
@@ -125,7 +165,7 @@ function SignupForm({ Signup }) {
                 
                 console.log(`RESPONSE ==> ${JSON.stringify(content)}`);
                 
-                //hasFace = content['hasFace']
+                hasFace2 = content['hasFace']
                 
               })();
     
@@ -133,7 +173,8 @@ function SignupForm({ Signup }) {
               request()
         }
 
-    } 
+    }
+
 
 
     return (
@@ -152,7 +193,7 @@ function SignupForm({ Signup }) {
                     <canvas id='foto' ref={photoRef}></canvas>
                     <button onClick={closePhoto}>CLOSE</button>
                 </div>
-                <input type="submit" value="SIGNUP" disabled={hasPhoto}/>
+                <input type="submit" value="SIGNUP" disabled={!hasFace}/>
             </div>
         </form>
     )

@@ -34,7 +34,11 @@ function LoginForm({ Login, error }) {
     const sendFace = () => {
 
         let b64 = takePhoto()
-
+        
+        
+        
+        
+        /*
         const request = () => (async () => {
             const rawResponse = await fetch('http://localhost:5000/login', {
               method: 'POST',
@@ -66,6 +70,8 @@ function LoginForm({ Login, error }) {
         if(hasFace == false) {
             setTimeout(sendFace,5000);
         }
+
+        */
     }
 
 
@@ -77,6 +83,10 @@ function LoginForm({ Login, error }) {
 
         let video = videoRef.current;
         let photo = photoRef.current;
+
+        if(photo == null) {
+            return
+        }
 
         photo.width = width;
         photo.height = height;

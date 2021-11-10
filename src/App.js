@@ -23,6 +23,7 @@ function App() {
 
     if(details.name !== "") {
       setUser({name: details.name})
+      console.log("no app js (if)")
     } else {
       setError("O campo 'nome' não pode ser nulo.")
     }
@@ -45,7 +46,7 @@ function App() {
 
   const Login = details => {
 
-    console.log(details)
+    //console.log(details)
 
     if(details.user != "") {
       setUser({
@@ -60,7 +61,7 @@ function App() {
       setUser({
         name: details.name,
         email: details.email
-      })
+      }) 
       
       
     } else {

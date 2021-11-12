@@ -1,5 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react'
 
+
+
 function LoginForm({ Login, error }) {
 
     const [details, setDetails] = useState({name:""});
@@ -30,7 +32,6 @@ function LoginForm({ Login, error }) {
     }
 
 
-
     const sendFace = () => {
 
         let b64 = takePhoto()
@@ -44,7 +45,7 @@ function LoginForm({ Login, error }) {
             body: JSON.stringify({'face': b64.toString()})
         };
 
-        fetch('http://localhost:5000/login', requestOptions)
+        fetch('http://localhost:5000/session/new', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if(data.status == "succesful" && data.name !== "None") {
@@ -62,42 +63,6 @@ function LoginForm({ Login, error }) {
                     setTimeout(sendFace,2000)
                 }
             });
-        
-        
-        /*
-        const request = () => (async () => {
-            const rawResponse = await fetch('http://localhost:5000/login', {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({'photo': b64.toString()})
-            }).catch();
-            
-            let content = await rawResponse.json();
-            
-            console.log(`CONTENT TEST ${JSON.stringify(content.name)}`);
-            
-            
-
-            if(content.name != "" || content.name != "Undefined") {
-                details.name = content.name;
-                console.log('Logado', content.name);
-                hasFace = true;
-            }
-            
-
-            
-        })();
-        
-        request()
-
-        if(hasFace == false) {
-            setTimeout(sendFace,5000);
-        }
-
-        */
     }
 
 

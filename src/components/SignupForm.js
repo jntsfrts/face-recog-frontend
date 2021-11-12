@@ -10,9 +10,6 @@ function SignupForm({ Signup }) {
     const [hasPhoto, setHasPhoto] = useState(false)
     const [hasFace, setHasFace] = useState(false)
 
-    let testeFace = false;
-    let hasFace2 = false;
-    
 
     const getVideo = () => {
         navigator.mediaDevices
@@ -47,7 +44,7 @@ function SignupForm({ Signup }) {
         };
 
 
-        fetch('http://localhost:5000/login/face', requestOptions)
+        fetch('http://localhost:5000/user/face', requestOptions)
             .then(response => response.json())
             .then(data => {
                 if(data.hasFace == "true") {
@@ -57,23 +54,7 @@ function SignupForm({ Signup }) {
                     setTimeout(sendFace,5000)
                     console.log(`[FACE NOT FOUND]`)
                 }
-            })
-            .then(
-
-                fetch('http://localhost:5000/login', requestOptions)
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.status == "succesful" && data.name !== "None") {
-                            console.log(`[USER ALREADY EXISTS]`)
-                            //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
-                            if (window.confirm(`OOPS! ${data.name} já possui cadastro. 😞 \nClique em OK para fazer login.`)) 
-                            {
-                            window.location.href='http://localhost:3000/login';
-                            };
-                        }
-                    })
-
-            );
+            });
         }
 
 
@@ -91,13 +72,11 @@ function SignupForm({ Signup }) {
         let ctx = photo.getContext('2d');
         ctx.drawImage(video, 0, 0, width, height);
 
-        // trying to get base64
-
         var canvas = document.getElementById('foto')
         var base64 = canvas.toDataURL("image/jpeg");
         base64 = base64.split("base64,")[1]
         details.face = base64
-        //setHasPhoto(true)
+        
         return base64;
     }
 
@@ -122,22 +101,17 @@ function SignupForm({ Signup }) {
         console.log("[ON SUBMIT HANDLER] - hasFace: "+  hasFace + " name:" + (details.name != ""))
 
         if(details.name !== "" && Boolean(hasFace) === true) {
-            
-            //Signup(details) //TODO colocar signup depois, dentro do then()
-            
-            
-
             const requestOptions = {
                 method: 'POST',
                 headers: { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({'name':details.name, 'face': details.face.toString()})
+                body: JSON.stringify({'name':details.name, 'email': details.email , 'face': details.face.toString()})
             };
     
     
-            fetch('http://localhost:5000/signup', requestOptions)
+            fetch('http://localhost:5000/user/new', requestOptions)
                 .then(response => response.json())
                 .then(data => {
                     if(data.status == "succesful" && data.name !== "None") {
@@ -155,7 +129,6 @@ function SignupForm({ Signup }) {
                     }
                 }).then(console.log("testando ultimo then"));
         }
-
     }
 
 
@@ -167,11 +140,11 @@ function SignupForm({ Signup }) {
                
                 <div className="form-group">
                     <label htmlFor="name">Nome:</label>
-                    <input type="text" name="name" id="name" onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
+                    <input type="text" name="name" id="name" required={true} onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="name">Email:</label>
-                    <input type="email" name="email" id="email" onChange={e => setDetails({...details, email:e.target.value})} value={details.email}/>
+                    <input type="email" name="email" id="email" required={true} onChange={e => setDetails({...details, email:e.target.value})} value={details.email}/>
                 </div>
                 <div className="form-group">
                     <video ref={videoRef}></video>

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect} from 'react';
 
 
 
@@ -9,7 +9,7 @@ function SignupForm({ Signup }) {
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
     const [hasFace, setHasFace] = useState(false)
-
+    const logo = 'images/logo.png'
 
     const getVideo = () => {
         navigator.mediaDevices
@@ -27,7 +27,6 @@ function SignupForm({ Signup }) {
 
 
     const sendFace = () => {
-        console.log('ON SEND FACE')
         let b64 = takePhoto()
 
         const requestOptions = {
@@ -48,11 +47,11 @@ function SignupForm({ Signup }) {
             .then(response => response.json())
             .then(data => {
                 if(data.hasFace == "true") {
-                    console.log(`[FACE FOUND] ${data.hasFace}`)
+                    console.log(`[FACE ENCONTRADA: ${data.hasFace}]`)
                     setHasFace(data.hasFace)
                 } else {
                     setTimeout(sendFace,5000)
-                    console.log(`[FACE NOT FOUND]`)
+                    console.log(`[FACE NÃO ENCONTRADA]`)
                 }
             });
         }
@@ -115,19 +114,19 @@ function SignupForm({ Signup }) {
                 .then(response => response.json())
                 .then(data => {
                     if(data.status == "succesful" && data.name !== "None") {
-                        console.log(`[USER LOGGED IN] ${data.name}`)
+                        console.log(`[USER: ${data.name}]`)
                         details.name = data.name
                         Signup(details)
                     } else {
-                        console.log(`[USER ALREADY EXISTS]`)
+                        console.log(`[USUÁRIO JÁ POSSUI CADASTRO]`)
                         //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
                         if (window.confirm(`OOPS! ${data.name} já possui cadastro. 😞 \nClique em OK para fazer login.`)) 
                         {
-                        window.location.href='http://localhost:3000/login';
+                        window.location.href='http://localhost:3000/session/new';
                         };
                         
                     }
-                }).then(console.log("testando ultimo then"));
+                });
         }
     }
 
@@ -137,7 +136,6 @@ function SignupForm({ Signup }) {
         <form onSubmit={submitHandler}>
             <div className="form-inner">
                 <h2>Cadastro</h2>
-               
                 <div className="form-group">
                     <label htmlFor="name">Nome:</label>
                     <input type="text" name="name" id="name" required={true} onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>

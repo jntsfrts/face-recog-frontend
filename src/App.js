@@ -7,17 +7,10 @@ import { Route, BrowserRouter } from "react-router-dom";
 
 function App() {
 
-  const adminUser = {
-    email:"admin@admin.com.br",
-    password:"123456"
-  }
-
   const [user, setUser] = useState({name:"", email:""});
   const [error, setError] = useState("");
 
   const Signup = details => {
-
-    console.log(details)
 
     if(details.name !== "") {
       setUser({name: details.name, email: details.email})
@@ -36,7 +29,6 @@ function App() {
   }
 
   const Logout = () => {
-    console.log("Logout");  
     setUser({
       name: "",
         email: ""

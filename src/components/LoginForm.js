@@ -13,7 +13,7 @@ function LoginForm({ Login, error }) {
 
     const submitHandler = e => {
         e.preventDefault();
-        console.log('EM LOGINFORM')
+        
         Login(details)
     } 
 
@@ -49,12 +49,12 @@ function LoginForm({ Login, error }) {
             .then(response => response.json())
             .then(data => {
                 if(data.status == "succesful" && data.name !== "None") {
-                    console.log(`[USER LOGGED IN] ${data.name}`)
+                    console.log(`[USUÁRIO LOGADO: ${data.name}]`)
                     details.name = data.name
                     setHasFace(true)
                     Login(details)
                 } else {
-                    console.log(`[USER NOT FOUND]`)
+                    console.log(`[USUÁRIO NÃO ENCONTRADO]`)
                     //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
                     if (window.confirm('OOPS! Não foi possível logar. 😞 \nClique em Cancelar para tentar novamente ou em OK para se cadastrar.')) 
                     {

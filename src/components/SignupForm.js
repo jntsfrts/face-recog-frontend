@@ -4,7 +4,7 @@ import React, {useState, useRef, useEffect} from 'react';
 
 function SignupForm({ Signup }) {
 
-    const [details, setDetails] = useState({name:"", email:"", face:""});
+    const [details, setDetails] = useState({name:"", email:"", token:"", face:""});
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
@@ -99,32 +99,39 @@ function SignupForm({ Signup }) {
         
         console.log("[ON SUBMIT HANDLER] - hasFace: "+  hasFace + " name:" + (details.name != ""))
 
-        if(details.name !== "" && Boolean(hasFace) === true) {
+        if(details.token !== "" && Boolean(hasFace) === true) {
             const requestOptions = {
                 method: 'POST',
                 headers: { 
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({'name':details.name, 'email': details.email , 'face': details.face.toString()})
+                body: JSON.stringify({'email': details.email, 'token': details.token, 'face': details.face.toString()})
             };
     
     
             fetch('http://localhost:5000/user/new', requestOptions)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(`${data.status}`)
+
                     if(data.status == "succesful" && data.name !== "None") {
                         console.log(`[USER: ${data.name}]`)
                         details.name = data.name
                         Signup(details)
-                    } else {
-                        console.log(`[USUÁRIO JÁ POSSUI CADASTRO]`)
+                    } else if(data.status == "already_registered_error"){
+                        
                         //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
                         if (window.confirm(`OOPS! ${data.name} já possui cadastro. 😞 \nClique em OK para fazer login.`)) 
                         {
                         window.location.href='http://localhost:3000/session/new';
                         };
                         
+                    } else if(data.status == "credentials_error") {
+                        if (window.confirm(`OPS! ${data.description} 😞 \n Tente novamente.`)) 
+                        {
+                        window.location.href='http://localhost:3000/user/new';
+                        };
                     }
                 });
         }
@@ -137,12 +144,12 @@ function SignupForm({ Signup }) {
             <div className="form-inner">
                 <h2>Cadastro</h2>
                 <div className="form-group">
-                    <label htmlFor="name">Nome:</label>
-                    <input type="text" name="name" id="name" required={true} onChange={e => setDetails({...details, name:e.target.value})} value={details.name}/>
-                </div>
-                <div className="form-group">
                     <label htmlFor="name">Email:</label>
                     <input type="email" name="email" id="email" required={true} onChange={e => setDetails({...details, email:e.target.value})} value={details.email}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="name">Token:</label>
+                    <input type="text" name="token" id="token" required={true} onChange={e => setDetails({...details, token:e.target.value})} value={details.token}/>
                 </div>
                 <div className="form-group">
                     <video ref={videoRef}></video>

@@ -4,7 +4,7 @@ import React, {useState, useRef, useEffect} from 'react'
 
 function LoginForm({ Login, error }) {
 
-    const [details, setDetails] = useState({name:""});
+    const [details, setDetails] = useState({name:"", accessLevel: ""});
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const [hasPhoto, setHasPhoto] = useState(false)
@@ -50,7 +50,9 @@ function LoginForm({ Login, error }) {
             .then(data => {
                 if(data.status == "succesful" && data.name !== "None") {
                     console.log(`[USUÁRIO LOGADO: ${data.name}]`)
-                    details.name = data.name
+                    //details.name = data.name
+                    //details.accessLevel = data.accessLevel
+                    setDetails({name: data.name, accessLevel: data.accessLevel})
                     setHasFace(true)
                     Login(details)
                 } else {
@@ -58,7 +60,7 @@ function LoginForm({ Login, error }) {
                     //alert("OOPS! Não foi possível logar. 😞\nPosicione-se melhor na câmera ou cadastre-se.")
                     if (window.confirm('OOPS! Não foi possível logar. 😞 \nClique em Cancelar para tentar novamente ou em OK para se cadastrar.')) 
                     {
-                    window.location.href='http://localhost:3000/signup';
+                    window.location.href='http://localhost:3000/user/new';
                     };
                     setTimeout(sendFace,2000)
                 }
@@ -129,5 +131,7 @@ function LoginForm({ Login, error }) {
         </form>
     )
 }
+
+
 
 export default LoginForm

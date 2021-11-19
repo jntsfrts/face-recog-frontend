@@ -9,7 +9,7 @@ import { Grid } from '@mui/material';
 function App() {
 
   //const [user, setUser] = useState({name:"", email:""});
-  const [user, setUser] = useState({name:"Jona", email:"", accessLevel: ""});
+  const [user, setUser] = useState({name:"", email:"", accessLevel: ""});
   const [error, setError] = useState("");
 
   const Signup = details => {
@@ -22,7 +22,8 @@ function App() {
   }
 
   const Login = details => {
-
+    console.log("NO APP (Login())")
+    console.log(details.user)
     if(details.user != "") {
       setUser({
         name: details.name,
@@ -65,27 +66,27 @@ function App() {
                       <Grid item xs={4}>
                         <DataCard 
                         level={'Público'}
-                        title={'Aumento trimestral do desmatamento'}
-                        subtitle={''}
-                        details={''}/>
+                        title={'Regiões efetadas'}
+                        subtitle={'Informações à respeito das regiões efetadas.'}
+                        details={'Contém dados sobre as regiões mais afetadas pelo uso de agrotótixcos proibidos.'}/>
                       </Grid>     
                     ) : (console.log("Restrição Level 1 aplicada"))}
                     {(parseInt(user.accessLevel) >= 2) ? (
                       <Grid item xs={4}>
                         <DataCard 
                         level={'Restrito'}
-                        title={''}
-                        subtitle={''}
-                        details={''}/>
+                        title={'Propriedades Envolvidas'}
+                        subtitle={'Contém informações sobre as fazendas.'}
+                        details={'Os dados vão desde gráficos até o ranking das que mais poluem.'}/>
                       </Grid>
                     ):(console.log("Restrição Level 2 aplicada"))}
                     {(parseInt(user.accessLevel) >= 3) ? (
                       <Grid item xs={4}>
                         <DataCard 
                         level={'Ultrassecreto'}
-                        title={''}
-                        subtitle={''}
-                        details={''}/>
+                        title={'Dados e Paradeiro dos Infratores'}
+                        subtitle={'Contém conjunto de dados a respeito dos criminosos.'}
+                        details={'A lista contém nome, endereço e localizaçào dos suspeitos, em uma lista que vai desde políticos à fazendeiros envolvidos.'}/>
                       </Grid>
                     ):(console.log("Restrição Level 3 aplicada"))}
                 </Grid>

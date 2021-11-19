@@ -32,7 +32,10 @@ export default function DataCard({level, title, subtitle, details}) {
         <Typography variant="body2">
             {details}
           <br />
-          {'"a benevolent smile"'}
+          {''}
+          <br />
+          {''}
+          <br />
         </Typography>
       </CardContent>
     </Card>

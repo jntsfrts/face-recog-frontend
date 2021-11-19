@@ -50,9 +50,9 @@ function LoginForm({ Login, error }) {
             .then(data => {
                 if(data.status == "succesful" && data.name !== "None") {
                     console.log(`[USUÁRIO LOGADO: ${data.name}]`)
-                    //details.name = data.name
-                    //details.accessLevel = data.accessLevel
-                    setDetails({name: data.name, accessLevel: data.accessLevel})
+                    details.name = data.name
+                    details.accessLevel = data.accessLevel
+                    //setDetails({name: data.name, accessLevel: data.accessLevel})
                     setHasFace(true)
                     Login(details)
                 } else {
